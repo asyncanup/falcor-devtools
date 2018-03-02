@@ -5,14 +5,14 @@ var log = console.log.bind(console);
 log('hook');
 
 function installGlobalHook(window) {
-  var log = console.log.bind(console);
+  var clog = console.log.bind(console);
 
   if (window.__FALCOR_DEVTOOLS_GLOBAL_HOOK__) {
-    log('hook already installed');
+    clog('hook already installed');
     return;
   }
 
-  log('initializing hook');
+  clog('initializing hook');
   const hook = ({
     model: null,
     setModel: function(model) {
