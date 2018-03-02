@@ -1,0 +1,42 @@
+{
+  "manifest_version": 2,
+
+  "name": "Falcor DevTools",
+  "description": "Debug Falcor path values as they come in over the network or from cache",
+  "version": "1.0",
+
+  "minimum_chrome_version": "49",
+
+  "background" : {
+    "scripts": ["build/background.js"],
+    "persistent": false
+  },
+  "browser_action": {
+    "default_icon": "falcor-icon.png",
+    "default_title": "Falcor DevTools",
+    "default_popup": "popup-disabled.html"
+  },
+
+  "devtools_page": "main.html",
+
+  "content_security_policy": "script-src 'self' 'unsafe-eval'; object-src 'self'",
+  "web_accessible_resources": [
+    "main.html",
+    "panel.html",
+    "build/backend.js"
+  ],
+
+  "permissions": [
+    "file:///*",
+    "http://*/*",
+    "https://*/*"
+  ],
+
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "js": ["build/hook.js"],
+      "run_at": "document_start"
+    }
+  ]
+}
