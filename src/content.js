@@ -1,6 +1,8 @@
 'use strict';
 
 /* global chrome */
+var log = console.log.bind(console);
+log('content');
 
 // proxy from main page to devtools (via the background page)
 var port = chrome.runtime.connect({
@@ -11,12 +13,14 @@ port.onMessage.addListener(handleMessageFromDevtools);
 port.onDisconnect.addListener(handleDisconnect);
 window.addEventListener('message', handleMessageFromPage);
 
+log('posting hello');
 window.postMessage({
   source: 'falcor-devtools-content-script',
   hello: true,
 }, '*');
 
 function handleMessageFromDevtools(message) {
+  log('message from devtools', message);
   window.postMessage({
     source: 'falcor-devtools-content-script',
     payload: message,
@@ -25,12 +29,13 @@ function handleMessageFromDevtools(message) {
 
 function handleMessageFromPage(evt) {
   if (evt.source === window && evt.data && evt.data.source === 'falcor-devtools-bridge') {
-    // console.log('page -> rep -> dev', evt.data);
+    log('message from page', evt.data);
     port.postMessage(evt.data.payload);
   }
 }
 
 function handleDisconnect() {
+  log('content disconnect');
   window.removeEventListener('message', handleMessageFromPage);
   window.postMessage({
     source: 'falcor-devtools-content-script',

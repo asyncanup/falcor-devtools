@@ -20,5 +20,10 @@ module.exports = {
       exclude: /node_modules/,
     }],
   },
+  watch: __DEV__,
+  watchOptions: {
+    aggregateTimeout: 300,
+    ignored: /node_modules/,
+  },
 };
 

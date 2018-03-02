@@ -1,16 +1,20 @@
 'use strict';
 
 /* global chrome */
+var log = console.log.bind(console);
+log('panel');
 
 function checkForFalcor(done) {
+  log('checking for falcor');
   chrome.devtools.inspectedWindow.eval(`!!(
     Object.keys(window.__FALCOR_DEVTOOLS_GLOBAL_HOOK__._models).length ||
     window.Falcor ||
     (window.require && require('falcor'))
   )`, function(falcorDetected, err) {
+    log('falcor detected?', falcorDetected);
     done(falcorDetected);
   });
-};
+}
 
 function inject(scriptName, done) {
   var src = `
@@ -29,10 +33,9 @@ function inject(scriptName, done) {
     }
     done();
   });
-};
+}
 
 var config = {
-  alreadyFoundFalcor: false,
   checkForFalcor,
   reload,
   reloadSubscribe(reloadFn) {
@@ -42,13 +45,13 @@ var config = {
     };
   },
   inject(done) {
-    inject(chrome.runtime.getURL('build/backend.js'), () => {
+    inject(chrome.runtime.getURL('backend.js'), () => {
       var port = chrome.runtime.connect({
         name: '' + chrome.devtools.inspectedWindow.tabId,
       });
       var disconnected = false;
 
-      var proxy = {
+      var wall = {
         listen(fn) {
           port.onMessage.addListener(message => fn(message));
         },
@@ -63,8 +66,24 @@ var config = {
       port.onDisconnect.addListener(() => {
         disconnected = true;
       });
-      done(proxy, () => port.disconnect());
+      done(wall, () => port.disconnect());
     });
   },
 };
+
+var Panel = require('./frontend/Panel');
+var React = require('react');
+var ReactDOM = require('react-dom');
+
+var node = document.getElementById('container');
+
+function reload() {
+  setTimeout(() => {
+    ReactDOM.unmountComponentAtNode(node);
+    node.innerHTML = '';
+    ReactDOM.render(<Panel {...config} />, node);
+  }, 100);
+}
+
+ReactDOM.render(<Panel {...config} />, node);
 

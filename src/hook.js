@@ -1,8 +1,18 @@
+'use strict';
+
+/* global chrome */
+var log = console.log.bind(console);
+log('hook');
+
 function installGlobalHook(window) {
+  var log = console.log.bind(console);
+
   if (window.__FALCOR_DEVTOOLS_GLOBAL_HOOK__) {
+    log('hook already installed');
     return;
   }
 
+  log('initializing hook');
   const hook = ({
     _models: {},
     helpers: {},
@@ -48,6 +58,7 @@ var lastDetectionResult;
 
 window.addEventListener('message', function(evt) {
   if (evt.source === window && evt.data && evt.data.source === 'falcor-detector') {
+    log('falcor detected');
     lastDetectionResult = {
       falcorDetected: true,
     };
@@ -63,11 +74,13 @@ window.addEventListener('pageshow', function(evt) {
   if (!lastDetectionResult || evt.target !== window.document) {
     return;
   }
+  log('sending last detection of falcor');
   chrome.runtime.sendMessage(lastDetectionResult);
 });
 
 var detectFalcor = `
 window.__FALCOR_DEVTOOLS_GLOBAL_HOOK__.on('model', function(evt) {
+  log('falcor model emitted');
   window.postMessage({
     source: 'falcor-detector',
   }, '*');

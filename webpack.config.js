@@ -11,6 +11,7 @@ module.exports = {
     hook: './src/hook.js',
     content: './src/content.js',
     panel: './src/panel.js',
+    'popup-shared': './src/popup-shared.js',
   },
   output: {
     path: __dirname + '/build',
@@ -25,6 +26,9 @@ module.exports = {
     new webpack.optimize.UglifyJsPlugin({
       mangle: false,
       beautify: true,
+      compress: {
+        warnings: false,
+      },
     }),
   ],
   module: {
@@ -33,6 +37,11 @@ module.exports = {
       loader:  'babel',
       exclude: /node_modules/,
     }],
+  },
+  watch: __DEV__,
+  watchOptions: {
+    aggregateTimeout: 300,
+    ignored: /node_modules/,
   },
 };
 
