@@ -2,7 +2,7 @@
 
 /* global chrome */
 var log = console.log.bind(console);
-log('hook');
+log('content');
 
 function installGlobalHook(window) {
   var clog = console.log.bind(console);

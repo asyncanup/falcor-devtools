@@ -8,7 +8,7 @@ module.exports = {
   entry: {
     devtools: './src/devtools.js',
     background: './src/background.js',
-    hook: './src/hook.js',
+    content: './src/content.js',
     panel: './src/panel.js',
     'popup-shared': './src/popup-shared.js',
   },
