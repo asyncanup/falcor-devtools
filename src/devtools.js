@@ -2,7 +2,7 @@
 
 /* global chrome */
 var log = console.log.bind(console);
-log('main');
+log('devtools');
 
 var panelCreated = false;
 
@@ -13,7 +13,7 @@ function createPanelIfFalcorLoaded() {
   }
   chrome.devtools.inspectedWindow.eval(`!!(
     Object.keys(window.__FALCOR_DEVTOOLS_GLOBAL_HOOK__._models).length ||
-    window.Falcor ||
+    window.falcor ||
     (window.require && require('falcor'))
   )`, function(falcorDetected, err) {
     if (!falcorDetected || panelCreated) {
@@ -26,18 +26,11 @@ function createPanelIfFalcorLoaded() {
     panelCreated = true;
     chrome.devtools.panels.create('Falcor', '', 'panel.html', function(panel) {
       log('panel created');
-      var falcorPanel = null;
       panel.onShown.addListener(function(window) {
-        falcorPanel = window.panel;
-        log('panel showing', falcorPanel);
-        // falcorPanel.resumeTransfer();
+        log('panel showing');
       });
       panel.onHidden.addListener(function() {
-        if (falcorPanel) {
-          log('panel hiding');
-          // falcorPanel.hideHighlight();
-          // falcorPanel.pauseTransfer();
-        }
+        log('panel hiding');
       });
     });
   });

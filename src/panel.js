@@ -38,40 +38,9 @@ function inject(scriptName, done) {
 var config = {
   checkForFalcor,
   reload,
-  reloadSubscribe(reloadFn) {
-    chrome.devtools.network.onNavigated.addListener(reloadFn);
-    return () => {
-      chrome.devtools.network.onNavigated.removeListener(reloadFn);
-    };
-  },
-  inject(done) {
-    inject(chrome.runtime.getURL('backend.js'), () => {
-      var port = chrome.runtime.connect({
-        name: '' + chrome.devtools.inspectedWindow.tabId,
-      });
-      var disconnected = false;
-
-      var wall = {
-        listen(fn) {
-          port.onMessage.addListener(message => fn(message));
-        },
-        send(data) {
-          if (disconnected) {
-            return;
-          }
-          port.postMessage(data);
-        },
-      };
-
-      port.onDisconnect.addListener(() => {
-        disconnected = true;
-      });
-      done(wall, () => port.disconnect());
-    });
-  },
 };
 
-var Panel = require('./frontend/Panel');
+var Panel = require('./frontend/App');
 var React = require('react');
 var ReactDOM = require('react-dom');
 

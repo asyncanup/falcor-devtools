@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 
-class Panel extends Component {
+class App extends Component {
   render() {
     return (
       <div>Lol Panel</div>
@@ -8,5 +8,5 @@ class Panel extends Component {
   }
 }
 
-module.exports = Panel;
+module.exports = App;
 

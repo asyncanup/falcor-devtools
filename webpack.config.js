@@ -6,10 +6,9 @@ var __DEV__ = process.env.NODE_ENV !== 'production';
 module.exports = {
   devtool: __DEV__ ? '#cheap-module-eval-source-map' : false,
   entry: {
-    main: './src/main.js',
+    devtools: './src/devtools.js',
     background: './src/background.js',
     hook: './src/hook.js',
-    content: './src/content.js',
     panel: './src/panel.js',
     'popup-shared': './src/popup-shared.js',
   },

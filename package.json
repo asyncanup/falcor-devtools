@@ -3,16 +3,14 @@
   "version": "1.0.0",
   "description": "",
   "scripts": {
-    "build:backend": "NODE_ENV=production webpack --config webpack.backend.js",
     "build:config": "NODE_ENV=production webpack --config webpack.config.js",
     "build:static": "cp *.png *.html manifest.json build/",
     "build:dir": "mkdir -p build",
-    "build": "npm-run-all clean build:dir build:static build:backend build:config",
+    "build": "npm-run-all clean build:dir build:static build:config",
     "clean": "rm -rf build",
     "lint": "eslint src",
     "start": "npm-run-all clean build:dir build:static --parallel watch:**",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "watch:backend": "webpack --config webpack.backend.js",
     "watch:config": "webpack --config webpack.config.js"
   },
   "dependencies": {
