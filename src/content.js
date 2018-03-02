@@ -15,11 +15,25 @@ function installGlobalHook(window) {
   clog('initializing hook');
   const hook = ({
     model: null,
+    capturing: false,
     setModel: function(model) {
       window.postMessage({
         source: 'falcor-detector',
       }, '*');
       hook.model = model;
+      model._root.onChange = function() {
+        clog('model updated', hook.capturing);
+        if (hook.capturing) {
+          var cache = model.getCache();
+          window.postMessage({
+            source: 'falcor-model-updated',
+            payload: {
+              // cache,
+              cacheSize: JSON.stringify(cache).length,
+            }
+          }, '*');
+        }
+      };
     },
   });
   window.__FALCOR_DEVTOOLS_GLOBAL_HOOK__ = hook;
@@ -41,6 +55,16 @@ window.addEventListener('pageshow', function(evt) {
   }
   log('sending last detection of falcor');
   chrome.runtime.sendMessage(lastDetectionResult);
+});
+window.addEventListener('message', function(evt) {
+  if (evt.source === window &&
+      evt.data &&
+      evt.data.source === 'falcor-model-updated') {
+    chrome.runtime.sendMessage({
+      // falcorModelupdated: evt.data.payload.cache,
+      cacheSize: evt.data.payload.cacheSize,
+    });
+  }
 });
 
 var js = ';(' + installGlobalHook.toString() + '(window))';
