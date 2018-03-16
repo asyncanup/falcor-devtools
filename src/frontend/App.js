@@ -1,5 +1,9 @@
 import React, { Component } from 'react';
+import bytes from 'bytes';
+
 const log = console.log.bind(console);
+
+import './App.css';
 
 class App extends Component {
   _cacheSub: null
@@ -7,11 +11,13 @@ class App extends Component {
   state = {
     // cache: {},
     cacheSize: 0,
+    nodeCounts: {},
   }
 
   SUBSCRIPTION_FIELDS = [
     // 'cache',
-    'cacheSize'
+    'cacheSize',
+    'nodeCounts',
   ]
 
   subscriptions = []
@@ -30,9 +36,30 @@ class App extends Component {
   }
 
   render() {
-    const { cacheSize } = this.state;
+    const { cacheSize, nodeCounts } = this.state;
+    const humanizedCacheSize = bytes(cacheSize, {
+      unitSeparator: ' ',
+      unit: 'B',
+      thousandsSeparator: ',',
+    });
     return (
-      <div>{ cacheSize }</div>
+      <div className="stats-container">
+        <div className="cache-size-container">
+          <div className="cache-size-title">Cache Size:</div>
+          <div className="cache-size-value">{ bytes(cacheSize) }</div>
+        </div>
+        <div className="node-count-container">
+          <div className="node-count-title">Node counts:</div>
+          <div className="node-count-row-container">
+            { Object.keys(nodeCounts).map(nodeName => (
+              <div className="node-count-row" key={ nodeName }>
+                <div className="node-count-row-title">{ nodeName }</div>
+                <div className="node-count-row-value">{ nodeCounts[nodeName] }</div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
     );
   }
 }

@@ -11,6 +11,7 @@ module.exports = {
     content: './src/content.js',
     panel: './src/panel.js',
     'popup-shared': './src/popup-shared.js',
+    'ui-test': './test/ui.js',
   },
   output: {
     path: __dirname + '/build',
@@ -35,12 +36,21 @@ module.exports = {
       test: /\.js$/,
       loader:  'babel',
       exclude: /node_modules/,
+    }, {
+      test: /\.css$/,
+      loaders: [ 'style-loader', 'css-loader' ]
+    }, {
+      test: /\.(png|jpg|gif|svg|eot|ttf|woff|woff2)$/,
+      loader: 'url-loader',
+      options: {
+        limit: 10000
+      }
     }],
   },
   watch: __DEV__,
   watchOptions: {
     aggregateTimeout: 300,
-    ignored: /node_modules/,
+      ignored: /node_modules/,
   },
 };
 

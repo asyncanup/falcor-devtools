@@ -2,8 +2,8 @@
 
 /* global chrome */
 var log = console.log.bind(console);
-log('content');
 
+const globalHookFn = `
 function installGlobalHook(window) {
   var clog = console.log.bind(console);
 
@@ -12,7 +12,6 @@ function installGlobalHook(window) {
     return;
   }
 
-  clog('initializing hook');
   const hook = ({
     model: null,
     capturing: false,
@@ -32,12 +31,35 @@ function installGlobalHook(window) {
               cacheSize: JSON.stringify(cache).length,
             }
           }, '*');
+          window.postMessage({
+            source: 'falcor-model-updated',
+            payload: {
+              nodeCounts: hook.getNodeCounts(cache),
+            }
+          }, '*');
         }
       };
     },
+    getNodeCounts: function(cache) {
+      const nodeCounts = {};
+      Object.keys(cache).forEach((key, i) => {
+        nodeCounts[key] = hook.getCounts(cache[key]);
+      });
+      return nodeCounts;
+    },
+    getCounts: function(obj) {
+      if (typeof obj !== 'object') {
+        return 1;
+      }
+      if (obj.$type) {
+        return 1;
+      }
+      return Object.keys(obj).reduce((sum, key) => sum + hook.getCounts(obj[key]), 0);
+    }
   });
   window.__FALCOR_DEVTOOLS_GLOBAL_HOOK__ = hook;
 }
+`;
 
 var lastDetectionResult;
 window.addEventListener('message', function(evt) {
@@ -63,11 +85,12 @@ window.addEventListener('message', function(evt) {
     chrome.runtime.sendMessage({
       // falcorModelupdated: evt.data.payload.cache,
       cacheSize: evt.data.payload.cacheSize,
+      nodeCounts: evt.data.payload.nodeCounts,
     });
   }
 });
 
-var js = ';(' + installGlobalHook.toString() + '(window))';
+var js = ';(' + globalHookFn + '(window))';
 
 // This script runs before the <head> element is created, so we add the script
 // to <html> instead.

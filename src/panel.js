@@ -5,7 +5,6 @@ var log = console.log.bind(console);
 log('panel');
 
 var config = {
-  reload,
   subscribe(fieldName, fn) {
     log('subscribing to', fieldName);
     function listener(msg, sender) {
@@ -26,14 +25,5 @@ var React = require('react');
 var ReactDOM = require('react-dom');
 
 var node = document.getElementById('container');
-
-function reload() {
-  setTimeout(() => {
-    ReactDOM.unmountComponentAtNode(node);
-    node.innerHTML = '';
-    ReactDOM.render(<Panel {...config} />, node);
-  }, 100);
-}
-
 ReactDOM.render(<Panel {...config} />, node);
 
